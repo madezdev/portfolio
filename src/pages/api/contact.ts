@@ -157,12 +157,27 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
+    // Get environment variables
+    const emailUser = process.env.EMAIL_USER;
+    const emailPassword = process.env.EMAIL_PASSWORD;
+    
+    if (!emailUser || !emailPassword) {
+      console.error('Email credentials not configured');
+      return new Response(JSON.stringify({
+        success: false,
+        message: 'Email service not configured'
+      }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     // Create transporter
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: import.meta.env.EMAIL_USER || process.env.EMAIL_USER,
-        pass: import.meta.env.EMAIL_PASSWORD || process.env.EMAIL_PASSWORD
+        user: emailUser,
+        pass: emailPassword
       }
     });
 
@@ -170,7 +185,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Email to owner (you)
     const ownerMailOptions = {
-      from: import.meta.env.EMAIL_USER || process.env.EMAIL_USER,
+      from: emailUser,
       to: 'madezdev@gmail.com',
       subject: templates.toOwner.subject(formData.subject),
       html: templates.toOwner.html(formData),
@@ -179,7 +194,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Confirmation email to sender
     const senderMailOptions = {
-      from: import.meta.env.EMAIL_USER || process.env.EMAIL_USER,
+      from: emailUser,
       to: formData.email,
       subject: templates.toSender.subject,
       html: templates.toSender.html(formData.name)
@@ -202,9 +217,21 @@ export const POST: APIRoute = async ({ request }) => {
   } catch (error) {
     console.error('Email sending error:', error);
     
+    // More specific error handling
+    let errorMessage = 'Failed to send email';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+    }
+    
     return new Response(JSON.stringify({
       success: false,
-      message: 'Failed to send email'
+      message: errorMessage,
+      error: process.env.NODE_ENV === 'development' ? error : undefined
     }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
