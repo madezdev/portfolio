@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@astrojs/react": "^4.3.0",
-    "@astrojs/tailwind": "^6.0.2",
+    "@astrojs/vercel": "^8.1.0",
     "@nanostores/react": "^1.0.0",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.11",
@@ -20,8 +20,6 @@
     "@types/react-dom": "^19.1.7",
     "@types/uuid": "^10.0.0",
     "astro": "^5.12.9",
-    "firebase": "^12.1.0",
-    "firebase-admin": "^13.4.0",
     "framer-motion": "^12.23.12",
     "js-cookie": "^3.0.5",
     "nanostores": "^1.0.1",
