@@ -7,9 +7,9 @@
 # Dependencies
 node_modules
 
-# Build outputs
-dist
-.vercel
+# Build outputs - Let Vercel handle these
+# dist - Remove this so Vercel can see build output
+# .vercel - Remove this so Vercel can see output config
 
 # SSL certificates
 *.pem
