@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@astrojs/react": "^4.3.0",
-    "@astrojs/vercel": "^8.1.0",
+    "@astrojs/vercel": "^8.2.5",
     "@nanostores/react": "^1.0.0",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.11",
@@ -20,6 +20,7 @@
     "@types/react-dom": "^19.1.7",
     "@types/uuid": "^10.0.0",
     "astro": "^5.12.9",
+    "dotenv": "^17.2.1",
     "framer-motion": "^12.23.12",
     "js-cookie": "^3.0.5",
     "nanostores": "^1.0.1",
