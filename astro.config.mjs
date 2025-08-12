@@ -1,6 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel';
+import vercel from '@astrojs/vercel/static';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 
@@ -8,7 +8,8 @@ import react from '@astrojs/react';
 export default defineConfig({
   output: 'static',
   adapter: vercel({
-    webAnalytics: { enabled: true }
+    webAnalytics: { enabled: true },
+    imageService: true
   }),
   site: 'https://tu-portfolio.vercel.app',
   vite: {
