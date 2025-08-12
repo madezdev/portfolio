@@ -1,12 +1,10 @@
 import { useStore } from '@nanostores/react';
 import { currentLanguage } from '../i18n/store';
 import { useTranslations } from '../i18n/utils';
-import { useAnalytics } from '../analytics/hooks';
 
 export default function Hero() {
   const lang = useStore(currentLanguage);
   const { t } = useTranslations(lang);
-  const { trackClick } = useAnalytics();
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden">
@@ -60,7 +58,6 @@ export default function Hero() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up delay-600">
             <a 
               href="#contact" 
-              onClick={() => trackClick('cta-primary', 'hero')}
               className="group px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-blue-500/25"
             >
               <span className="flex items-center gap-2">
@@ -73,7 +70,6 @@ export default function Hero() {
             
             <a 
               href="#about" 
-              onClick={() => trackClick('cta-secondary', 'hero')}
               className="px-8 py-4 border-2 border-gray-600 text-white font-semibold rounded-xl hover:bg-white hover:text-slate-900 transform hover:scale-105 transition-all duration-300"
             >
               {t('hero.cta.secondary')}

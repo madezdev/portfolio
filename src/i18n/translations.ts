@@ -105,7 +105,7 @@ export const translations = {
           features: {
             0: 'Multi-tenancy',
             1: 'Sistemas de pago',
-            2: 'Analytics dashboard',
+            2: 'Dashboard de administración',
             3: 'Cloud deployment'
           }
         },
@@ -308,7 +308,7 @@ export const translations = {
           features: {
             0: 'Multi-tenancy',
             1: 'Payment systems',
-            2: 'Analytics dashboard',
+            2: 'Dashboard de administración',
             3: 'Cloud deployment'
           }
         },
