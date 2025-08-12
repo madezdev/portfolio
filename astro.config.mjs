@@ -11,7 +11,7 @@ export default defineConfig({
     webAnalytics: { enabled: true },
     imageService: true
   }),
-  site: 'https://tu-portfolio.vercel.app',
+  site: 'https://www.madez.dev',
   vite: {
     plugins: [tailwindcss()],
     server: {
