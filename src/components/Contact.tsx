@@ -1,13 +1,11 @@
 import { useStore } from '@nanostores/react';
 import { currentLanguage } from '../i18n/store';
 import { useTranslations } from '../i18n/utils';
-import { useAnalytics } from '../analytics/hooks';
 import { useState } from 'react';
 
 export default function Contact() {
   const lang = useStore(currentLanguage);
   const { t } = useTranslations(lang);
-  const { trackClick, trackFormSubmit } = useAnalytics();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
@@ -46,8 +44,6 @@ export default function Contact() {
         setShowSuccess(true);
         form.reset();
 
-        // Track successful form submission
-        trackFormSubmit('contact', true);
 
         // Hide success message after 5 seconds
         setTimeout(() => setShowSuccess(false), 5000);
@@ -62,8 +58,6 @@ export default function Contact() {
         : 'Error sending message. Please try again.'
       );
 
-      // Track failed form submission
-      trackFormSubmit('contact', false);
 
       // Hide error message after 5 seconds
       setTimeout(() => setShowError(false), 5000);
@@ -109,7 +103,6 @@ export default function Contact() {
                 <a
                   href={method.href}
                   target="_blank"
-                  onClick={() => trackClick(`contact-${method.key}`, 'contact')}
                   className={`text-gray-400 hover:text-${method.color}-400 transition-colors`}
                 >
                   <div key={method.key} className={`flex items-center p-4 bg-slate-900/50 rounded-xl border border-slate-800 hover:border-${method.color}-500/50 transition-colors group`}>

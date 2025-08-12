@@ -1,28 +1,13 @@
 import nodemailer from 'nodemailer';
 import 'dotenv/config';
-import type { APIRoute } from 'astro';
+export { renderers } from '../../renderers.mjs';
 
-// Define types for the application
-type Language = 'es' | 'en';
-
-interface ContactFormData {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-  budget?: string;
-  language?: Language;
-}
-
-// Define prerender = false to enable server-side API endpoints
-export const prerender = false;
-
-// Email templates
-const emailTemplates: Record<Language, any> = {
+const prerender = false;
+const emailTemplates = {
   es: {
     toOwner: {
-      subject: (subject: string) => `Nuevo contacto: ${subject}`,
-      html: (data: ContactFormData) => `
+      subject: (subject) => `Nuevo contacto: ${subject}`,
+      html: (data) => `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #3b82f6;">Nuevo mensaje de contacto</h2>
           
@@ -31,7 +16,7 @@ const emailTemplates: Record<Language, any> = {
             <p><strong>Nombre:</strong> ${data.name}</p>
             <p><strong>Email:</strong> ${data.email}</p>
             <p><strong>Asunto:</strong> ${data.subject}</p>
-            ${data.budget ? `<p><strong>Presupuesto:</strong> ${data.budget}</p>` : ''}
+            ${data.budget ? `<p><strong>Presupuesto:</strong> ${data.budget}</p>` : ""}
           </div>
           
           <div style="background-color: #fff; border-left: 4px solid #3b82f6; padding: 20px; margin: 20px 0;">
@@ -46,8 +31,8 @@ const emailTemplates: Record<Language, any> = {
       `
     },
     toSender: {
-      subject: 'Confirmación: Hemos recibido tu mensaje',
-      html: (name: string) => `
+      subject: "Confirmación: Hemos recibido tu mensaje",
+      html: (name) => `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #3b82f6;">¡Gracias por contactarme!</h2>
           
@@ -84,8 +69,8 @@ const emailTemplates: Record<Language, any> = {
   },
   en: {
     toOwner: {
-      subject: (subject: string) => `New contact: ${subject}`,
-      html: (data: ContactFormData) => `
+      subject: (subject) => `New contact: ${subject}`,
+      html: (data) => `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #3b82f6;">New contact message</h2>
           
@@ -94,7 +79,7 @@ const emailTemplates: Record<Language, any> = {
             <p><strong>Name:</strong> ${data.name}</p>
             <p><strong>Email:</strong> ${data.email}</p>
             <p><strong>Subject:</strong> ${data.subject}</p>
-            ${data.budget ? `<p><strong>Budget:</strong> ${data.budget}</p>` : ''}
+            ${data.budget ? `<p><strong>Budget:</strong> ${data.budget}</p>` : ""}
           </div>
           
           <div style="background-color: #fff; border-left: 4px solid #3b82f6; padding: 20px; margin: 20px 0;">
@@ -109,8 +94,8 @@ const emailTemplates: Record<Language, any> = {
       `
     },
     toSender: {
-      subject: 'Confirmation: We received your message',
-      html: (name: string) => `
+      subject: "Confirmation: We received your message",
+      html: (name) => `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #3b82f6;">Thank you for reaching out!</h2>
           
@@ -146,135 +131,119 @@ const emailTemplates: Record<Language, any> = {
     }
   }
 };
-
-export const POST: APIRoute = async ({ request }) => {
+const POST = async ({ request }) => {
   try {
-    // Parse JSON from request body
-    const formData = await request.json() as ContactFormData;
-    
-    // Validate required fields
+    const formData = await request.json();
     if (!formData.name || !formData.email || !formData.message) {
       return new Response(
         JSON.stringify({
           success: false,
-          message: 'Missing required fields'
-        }), 
+          message: "Missing required fields"
+        }),
         { status: 400 }
       );
     }
-
-    // Get environment variables
     const emailUser = process.env.EMAIL_USER;
     const emailPassword = process.env.EMAIL_PASSWORD;
-    
-    console.log('Environment variables check:', { 
-      userPresent: !!emailUser, 
+    console.log("Environment variables check:", {
+      userPresent: !!emailUser,
       passPresent: !!emailPassword,
       passLength: emailPassword?.length
     });
-    
     if (!emailUser || !emailPassword) {
-      console.error('Email credentials not configured');
+      console.error("Email credentials not configured");
       return new Response(
         JSON.stringify({
           success: false,
-          message: 'Email service not configured'
+          message: "Email service not configured"
         }),
         { status: 500 }
       );
     }
-
-    // Create transporter
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      service: "gmail",
       auth: {
         user: emailUser,
         pass: emailPassword
       }
     });
-
-    // Use default language 'es' if the provided language is not valid
-    const language: Language = (formData.language && (formData.language === 'es' || formData.language === 'en')) 
-      ? formData.language 
-      : 'es';
+    const language = formData.language && (formData.language === "es" || formData.language === "en") ? formData.language : "es";
     const templates = emailTemplates[language];
-
-    // Email to owner (you)
     const ownerMailOptions = {
       from: emailUser,
-      to: 'madezdev@gmail.com',
+      to: "madezdev@gmail.com",
       subject: templates.toOwner.subject(formData.subject),
       html: templates.toOwner.html(formData),
       replyTo: formData.email
     };
-
-    // Confirmation email to sender
     const senderMailOptions = {
       from: emailUser,
       to: formData.email,
       subject: templates.toSender.subject,
       html: templates.toSender.html(formData.name)
     };
-
-    // Send emails
     await Promise.all([
       transporter.sendMail(ownerMailOptions),
       transporter.sendMail(senderMailOptions)
     ]);
-
     return new Response(
       JSON.stringify({
         success: true,
-        message: 'Emails sent successfully'
+        message: "Emails sent successfully"
       }),
-      { 
+      {
         status: 200,
         headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
         }
       }
     );
-
   } catch (error) {
-    console.error('Email sending error:', error);
-    
-    // More specific error handling
-    let errorMessage = 'Failed to send email';
+    console.error("Email sending error:", error);
+    let errorMessage = "Failed to send email";
     if (error instanceof Error) {
       errorMessage = error.message;
-      console.error('Error details:', {
+      console.error("Error details:", {
         message: error.message,
         stack: error.stack,
         name: error.name
       });
     }
-    
     return new Response(
       JSON.stringify({
         success: false,
         message: errorMessage,
-        error: process.env.NODE_ENV === 'development' ? String(error) : undefined
+        error: process.env.NODE_ENV === "development" ? String(error) : void 0
       }),
-      { 
+      {
         status: 500,
         headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
         }
       }
     );
   }
 };
-
-// Handle OPTIONS requests for CORS preflight
-export const OPTIONS: APIRoute = async () => {
+const OPTIONS = async () => {
   return new Response(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type'
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type"
     }
   });
 };
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  OPTIONS,
+  POST,
+  prerender
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const page = () => _page;
+
+export { page };
