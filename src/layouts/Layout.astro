@@ -14,7 +14,7 @@ const {
 	title, 
 	description = 'Martin - Desarrollador Full Stack & Diseñador UX/UI. Desarrollo aplicaciones web modernas con React, Node.js y diseño UX/UI centrado en el usuario.',
 	image = '/og-image.jpg',
-	url = Astro.url.pathname,
+	url = '/',
 	lang = 'es',
 	keywords = ['desarrollador full stack', 'diseñador UX/UI', 'React', 'Node.js', 'desarrollo web', 'freelancer'],
 	type = 'website',
@@ -23,8 +23,8 @@ const {
 
 import '../styles/global.css'
 
-const canonicalUrl = new URL(url, Astro.site);
-const imageUrl = new URL(image, Astro.site);
+const canonicalUrl = `https://tu-dominio.web.app${url}`;
+const imageUrl = `https://tu-dominio.web.app${image}`;
 ---
 
 <!doctype html>
@@ -41,7 +41,7 @@ const imageUrl = new URL(image, Astro.site);
 		<meta name="generator" content={Astro.generator} />
 		
 		<!-- Canonical URL -->
-		<link rel="canonical" href={canonicalUrl.href} />
+		<link rel="canonical" href={canonicalUrl} />
 		
 		<!-- Icons -->
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -54,8 +54,8 @@ const imageUrl = new URL(image, Astro.site);
 		<meta property="og:type" content={type} />
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
-		<meta property="og:image" content={imageUrl.href} />
-		<meta property="og:url" content={canonicalUrl.href} />
+		<meta property="og:image" content={imageUrl} />
+		<meta property="og:url" content={canonicalUrl} />
 		<meta property="og:site_name" content="Martin - Portfolio" />
 		<meta property="og:locale" content={lang === 'es' ? 'es_ES' : 'en_US'} />
 		
@@ -63,7 +63,7 @@ const imageUrl = new URL(image, Astro.site);
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
-		<meta name="twitter:image" content={imageUrl.href} />
+		<meta name="twitter:image" content={imageUrl} />
 		<meta name="twitter:creator" content="@martindev" />
 		
 		<!-- Additional SEO Meta Tags -->
