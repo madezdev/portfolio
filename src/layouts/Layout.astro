@@ -1,24 +1,126 @@
 ---
 export interface Props {
 	title: string;
+	description?: string;
+	image?: string;
+	url?: string;
+	lang?: string;
+	keywords?: string[];
+	type?: 'website' | 'article' | 'profile';
+	author?: string;
 }
 
-const { title } = Astro.props;
+const { 
+	title, 
+	description = 'Martin - Desarrollador Full Stack & Diseñador UX/UI. Desarrollo aplicaciones web modernas con React, Node.js y diseño UX/UI centrado en el usuario.',
+	image = '/og-image.jpg',
+	url = Astro.url.pathname,
+	lang = 'es',
+	keywords = ['desarrollador full stack', 'diseñador UX/UI', 'React', 'Node.js', 'desarrollo web', 'freelancer'],
+	type = 'website',
+	author = 'Martin Ezequiel'
+} = Astro.props;
+
 import '../styles/global.css'
+
+const canonicalUrl = new URL(url, Astro.site);
+const imageUrl = new URL(image, Astro.site);
 ---
 
 <!doctype html>
-<html lang="es" class="scroll-smooth">
+<html lang={lang} class="scroll-smooth">
 	<head>
+		<!-- Basic Meta Tags -->
 		<meta charset="UTF-8" />
-		<meta name="description" content="Martin - Desarrollador Full Stack & Diseñador UX/UI" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content={description} />
+		<meta name="keywords" content={keywords.join(', ')} />
+		<meta name="author" content={author} />
+		<meta name="robots" content="index, follow" />
+		<meta name="googlebot" content="index, follow" />
 		<meta name="generator" content={Astro.generator} />
+		
+		<!-- Canonical URL -->
+		<link rel="canonical" href={canonicalUrl.href} />
+		
+		<!-- Icons -->
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+		<link rel="manifest" href="/manifest.json" />
+		
+		<!-- Open Graph Meta Tags -->
+		<meta property="og:type" content={type} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={imageUrl.href} />
+		<meta property="og:url" content={canonicalUrl.href} />
+		<meta property="og:site_name" content="Martin - Portfolio" />
+		<meta property="og:locale" content={lang === 'es' ? 'es_ES' : 'en_US'} />
+		
+		<!-- Twitter Card Meta Tags -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={imageUrl.href} />
+		<meta name="twitter:creator" content="@martindev" />
+		
+		<!-- Additional SEO Meta Tags -->
+		<meta name="theme-color" content="#0f172a" />
+		<meta name="msapplication-TileColor" content="#0f172a" />
+		<meta name="format-detection" content="telephone=no" />
+		
 		<title>{title}</title>
+		
+		<!-- Preconnect for Performance -->
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+		<link rel="preconnect" href="https://firebase.googleapis.com">
+		<link rel="preconnect" href="https://firestore.googleapis.com">
+		
+		<!-- Preload critical resources -->
+		<link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+		<noscript>
+			<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+		</noscript>
+		
+		<!-- Preload critical images -->
+		<link rel="preload" href="/hero-bg.webp" as="image" type="image/webp" media="(min-width: 768px)">
+		<link rel="preload" href="/og-image.jpg" as="image" type="image/jpeg">
+		
+		<!-- JSON-LD Structured Data -->
+		<script type="application/ld+json">
+			{
+				"@context": "https://schema.org",
+				"@type": "Person",
+				"name": "Martin Ezequiel",
+				"jobTitle": "Full Stack Developer & UX/UI Designer",
+				"description": "Desarrollador Full Stack especializado en React, Node.js y diseño UX/UI",
+				"url": "https://tu-dominio.web.app",
+				"sameAs": [
+					"https://linkedin.com/in/tu-perfil",
+					"https://github.com/tu-usuario",
+					"https://twitter.com/tu-usuario"
+				],
+				"knowsAbout": [
+					"React",
+					"Node.js",
+					"TypeScript",
+					"UX/UI Design",
+					"Full Stack Development",
+					"Web Development"
+				],
+				"offers": {
+					"@type": "Offer",
+					"itemOffered": {
+						"@type": "Service",
+						"name": "Desarrollo Web Full Stack",
+						"description": "Desarrollo de aplicaciones web modernas con React y Node.js"
+					}
+				}
+			}
+		</script>
 	</head>
 	<body class="bg-slate-950 text-white font-sans antialiased">
 		<slot />

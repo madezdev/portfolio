@@ -20,7 +20,7 @@ export default function Contact() {
 
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
-    
+
     const contactData = {
       name: formData.get('name') as string,
       email: formData.get('email') as string,
@@ -45,10 +45,10 @@ export default function Contact() {
         setIsSubmitting(false);
         setShowSuccess(true);
         form.reset();
-        
+
         // Track successful form submission
         trackFormSubmit('contact', true);
-        
+
         // Hide success message after 5 seconds
         setTimeout(() => setShowSuccess(false), 5000);
       } else {
@@ -57,14 +57,14 @@ export default function Contact() {
     } catch (error) {
       setIsSubmitting(false);
       setShowError(true);
-      setErrorMessage(lang === 'es' 
-        ? 'Error al enviar el mensaje. Por favor intenta de nuevo.' 
+      setErrorMessage(lang === 'es'
+        ? 'Error al enviar el mensaje. Por favor intenta de nuevo.'
         : 'Error sending message. Please try again.'
       );
-      
+
       // Track failed form submission
       trackFormSubmit('contact', false);
-      
+
       // Hide error message after 5 seconds
       setTimeout(() => setShowError(false), 5000);
     }
@@ -72,9 +72,9 @@ export default function Contact() {
 
   const contactMethods = [
     { key: 'email', icon: '📧', color: 'blue', href: 'mailto:madezdev@gmail.com', value: 'madezdev@gmail.com' },
-    { key: 'whatsapp', icon: '💬', color: 'green', href: 'https://wa.me/1234567890', value: '+1 (234) 567-8900' },
-    { key: 'linkedin', icon: '💼', color: 'blue', href: 'https://linkedin.com/in/martin-dev', value: '/in/martin-dev' },
-    { key: 'github', icon: '🐙', color: 'purple', href: 'https://github.com/martin-dev', value: '/martin-dev' }
+    { key: 'whatsapp', icon: '💬', color: 'green', href: 'https://wa.me/5491133266874', value: '+54 9 (11) 3326-6874' },
+    { key: 'linkedin', icon: '💼', color: 'blue', href: 'https://linkedin.com/in/madezdev', value: '/in/madezdev' },
+    { key: 'github', icon: '🐙', color: 'purple', href: 'https://github.com/madezdev', value: '/madezdev' }
   ];
 
   return (
@@ -104,23 +104,24 @@ export default function Contact() {
             </div>
 
             {/* Contact Methods */}
-            <div className="space-y-6">
+            <div className="flex flex-col gap-2">
               {contactMethods.map((method) => (
-                <div key={method.key} className={`flex items-center p-4 bg-slate-900/50 rounded-xl border border-slate-800 hover:border-${method.color}-500/50 transition-colors group`}>
-                  <div className={`w-12 h-12 bg-${method.color}-500/20 rounded-lg flex items-center justify-center mr-4 group-hover:bg-${method.color}-500/30 transition-colors`}>
-                    <span className={`text-${method.color}-400 text-xl`}>{method.icon}</span>
-                  </div>
-                  <div>
-                    <h4 className="text-white font-semibold">{t(`contact.methods.${method.key}`)}</h4>
-                    <a 
-                      href={method.href} 
-                      onClick={() => trackClick(`contact-${method.key}`, 'contact')}
-                      className={`text-gray-400 hover:text-${method.color}-400 transition-colors`}
-                    >
+                <a
+                  href={method.href}
+                  target="_blank"
+                  onClick={() => trackClick(`contact-${method.key}`, 'contact')}
+                  className={`text-gray-400 hover:text-${method.color}-400 transition-colors`}
+                >
+                  <div key={method.key} className={`flex items-center p-4 bg-slate-900/50 rounded-xl border border-slate-800 hover:border-${method.color}-500/50 transition-colors group`}>
+                    <div className={`w-12 h-12 bg-${method.color}-500/20 rounded-lg flex items-center justify-center mr-4 group-hover:bg-${method.color}-500/30 transition-colors`}>
+                      <span className={`text-${method.color}-400 text-xl`}>{method.icon}</span>
+                    </div>
+                    <div>
+                      <h4 className="text-white font-semibold">{t(`contact.methods.${method.key}`)}</h4>
                       {method.value}
-                    </a>
+                    </div>
                   </div>
-                </div>
+                </a>
               ))}
             </div>
 
@@ -139,31 +140,31 @@ export default function Contact() {
           {/* Contact Form */}
           <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-8">
             <h3 className="text-2xl font-bold text-white mb-6">{t('contact.form.title')}</h3>
-            
+
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
                     {t('contact.form.fields.name')}
                   </label>
-                  <input 
-                    type="text" 
-                    id="name" 
-                    name="name" 
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
                     required
                     className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                     placeholder={t('contact.form.fields.namePlaceholder')}
                   />
                 </div>
-                
+
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                     {t('contact.form.fields.email')}
                   </label>
-                  <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
                     required
                     className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                     placeholder={t('contact.form.fields.emailPlaceholder')}
@@ -175,9 +176,9 @@ export default function Contact() {
                 <label htmlFor="subject" className="block text-sm font-medium text-gray-300 mb-2">
                   {t('contact.form.fields.subject')}
                 </label>
-                <select 
-                  id="subject" 
-                  name="subject" 
+                <select
+                  id="subject"
+                  name="subject"
                   required
                   className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                 >
@@ -195,8 +196,8 @@ export default function Contact() {
                 <label htmlFor="budget" className="block text-sm font-medium text-gray-300 mb-2">
                   {t('contact.form.fields.budget')}
                 </label>
-                <select 
-                  id="budget" 
+                <select
+                  id="budget"
                   name="budget"
                   className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                 >
@@ -213,9 +214,9 @@ export default function Contact() {
                 <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
                   {t('contact.form.fields.message')}
                 </label>
-                <textarea 
-                  id="message" 
-                  name="message" 
+                <textarea
+                  id="message"
+                  name="message"
                   rows={5}
                   required
                   className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors resize-none"
@@ -223,8 +224,8 @@ export default function Contact() {
                 />
               </div>
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={isSubmitting}
                 className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-4 px-6 rounded-lg hover:from-blue-600 hover:to-purple-700 transform hover:scale-[1.02] transition-all duration-300 shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
               >

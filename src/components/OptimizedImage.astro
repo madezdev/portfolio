@@ -1,0 +1,49 @@
+---
+export interface Props {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  loading?: 'lazy' | 'eager';
+  priority?: boolean;
+  class?: string;
+  sizes?: string;
+}
+
+const {
+  src,
+  alt,
+  width,
+  height,
+  loading = 'lazy',
+  priority = false,
+  class: className = '',
+  sizes = '100vw'
+} = Astro.props;
+
+// Generate responsive image formats
+const webpSrc = src.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+const avifSrc = src.replace(/\.(jpg|jpeg|png)$/i, '.avif');
+---
+
+<picture class={className}>
+  <!-- Modern formats for better performance -->
+  <source srcset={avifSrc} type="image/avif" sizes={sizes} />
+  <source srcset={webpSrc} type="image/webp" sizes={sizes} />
+  
+  <!-- Fallback -->
+  <img
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    loading={priority ? 'eager' : loading}
+    decoding="async"
+    class="w-full h-auto"
+    style={priority ? '' : 'content-visibility: auto;'}
+  />
+</picture>
+
+{priority && (
+  <link rel="preload" as="image" href={avifSrc} type="image/avif" />
+)}

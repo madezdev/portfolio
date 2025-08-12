@@ -1,4 +1,8 @@
 ---
+const email = 'madezdev@gmail.com';
+const phone = '+54 9 (11) 3326-6874';
+const linkedin = 'madezdev';
+const github = 'madezdev';
 ---
 
 <section id="contact" class="py-20 bg-slate-950">
@@ -31,8 +35,8 @@
             </div>
             <div>
               <h4 class="text-white font-semibold">Email</h4>
-              <a href="mailto:martin@ejemplo.com" class="text-gray-400 hover:text-blue-400 transition-colors">
-                martin@ejemplo.com
+              <a href="mailto:{email}" class="text-gray-400 hover:text-blue-400 transition-colors">
+                {email}
               </a>
             </div>
           </div>
@@ -43,8 +47,10 @@
             </div>
             <div>
               <h4 class="text-white font-semibold">WhatsApp</h4>
-              <a href="https://wa.me/1234567890" class="text-gray-400 hover:text-green-400 transition-colors">
-                +1 (234) 567-8900
+              <a href="https://wa.me/{phone}" 
+                target="_blank"
+                class="text-gray-400 hover:text-green-400 transition-colors">
+                {phone}
               </a>
             </div>
           </div>
@@ -55,8 +61,10 @@
             </div>
             <div>
               <h4 class="text-white font-semibold">LinkedIn</h4>
-              <a href="https://linkedin.com/in/martin-dev" class="text-gray-400 hover:text-blue-400 transition-colors">
-                /in/martin-dev
+              <a href="https://linkedin.com/in/{linkedin}" 
+                target="_blank"
+                class="text-gray-400 hover:text-blue-400 transition-colors">
+                /in/{linkedin}
               </a>
             </div>
           </div>
@@ -67,8 +75,10 @@
             </div>
             <div>
               <h4 class="text-white font-semibold">GitHub</h4>
-              <a href="https://github.com/martin-dev" class="text-gray-400 hover:text-purple-400 transition-colors">
-                /martin-dev
+              <a href="https://github.com/{github}" 
+                target="_blank"
+                class="text-gray-400 hover:text-purple-400 transition-colors">
+                /{github}
               </a>
             </div>
           </div>

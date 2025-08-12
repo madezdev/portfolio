@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import nodemailer from 'nodemailer';
 
+export const prerender = false;
+
 interface ContactFormData {
   name: string;
   email: string;
@@ -156,7 +158,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Create transporter
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: import.meta.env.EMAIL_USER || process.env.EMAIL_USER,

@@ -1,0 +1,22 @@
+# Robots.txt for Martin's Portfolio
+# https://developers.google.com/search/docs/crawling-indexing/robots/intro
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://tu-dominio.web.app/sitemap.xml
+
+# Block access to admin areas and private files
+Disallow: /api/
+Disallow: /.env
+Disallow: /firebase.json
+Disallow: /.firebase/
+
+# Block common non-content paths
+Disallow: /*?utm_*
+Disallow: /*?fbclid=*
+Disallow: /*?gclid=*
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1

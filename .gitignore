@@ -27,3 +27,6 @@ pnpm-debug.log*
 .claude/
 Claude/
 CLAUDE.md
+
+# SSL certificates for development
+*.pem

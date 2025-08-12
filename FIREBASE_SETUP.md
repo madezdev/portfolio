@@ -79,8 +79,8 @@ Cada evento se guarda con esta estructura:
 ## Monitoreo
 
 Para ver los analytics:
-- Dashboard: `http://localhost:4321/analytics-dashboard`
-- API directa: `http://localhost:4321/api/analytics?report=weekly`
+- Dashboard: `https://localhost:4321/analytics-dashboard`
+- API directa: `https://localhost:4321/api/analytics?report=weekly`
 
 ## Seguridad
 
