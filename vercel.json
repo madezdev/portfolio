@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/contact.js": {
+    "src/pages/api/contact.ts": {
       "maxDuration": 30
     },
     "api/analytics.js": {
