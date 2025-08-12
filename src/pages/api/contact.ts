@@ -1,5 +1,9 @@
 import nodemailer from 'nodemailer';
 import 'dotenv/config';
+import type { APIRoute } from 'astro';
+
+// Define prerender = false to enable server-side API endpoints
+export const prerender = false;
 
 // Email templates
 const emailTemplates = {
@@ -131,29 +135,20 @@ const emailTemplates = {
   }
 };
 
-export default async function handler(req, res) {
-  // Enable CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ success: false, message: 'Method not allowed' });
-  }
-
+export const POST: APIRoute = async ({ request }) => {
   try {
-    const formData = req.body;
+    // Parse JSON from request body
+    const formData = await request.json();
     
     // Validate required fields
     if (!formData.name || !formData.email || !formData.message) {
-      return res.status(400).json({
-        success: false,
-        message: 'Missing required fields'
-      });
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'Missing required fields'
+        }), 
+        { status: 400 }
+      );
     }
 
     // Get environment variables
@@ -168,10 +163,13 @@ export default async function handler(req, res) {
     
     if (!emailUser || !emailPassword) {
       console.error('Email credentials not configured');
-      return res.status(500).json({
-        success: false,
-        message: 'Email service not configured'
-      });
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'Email service not configured'
+        }),
+        { status: 500 }
+      );
     }
 
     // Create transporter
@@ -208,10 +206,19 @@ export default async function handler(req, res) {
       transporter.sendMail(senderMailOptions)
     ]);
 
-    return res.status(200).json({
-      success: true,
-      message: 'Emails sent successfully'
-    });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: 'Emails sent successfully'
+      }),
+      { 
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      }
+    );
 
   } catch (error) {
     console.error('Email sending error:', error);
@@ -227,10 +234,31 @@ export default async function handler(req, res) {
       });
     }
     
-    return res.status(500).json({
-      success: false,
-      message: errorMessage,
-      error: process.env.NODE_ENV === 'development' ? error : undefined
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: errorMessage,
+        error: process.env.NODE_ENV === 'development' ? String(error) : undefined
+      }),
+      { 
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      }
+    );
   }
-}
+};
+
+// Handle OPTIONS requests for CORS preflight
+export const OPTIONS: APIRoute = async () => {
+  return new Response(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type'
+    }
+  });
+};
