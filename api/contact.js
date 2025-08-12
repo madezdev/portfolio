@@ -1,7 +1,6 @@
 import nodemailer from 'nodemailer';
-export { renderers } from '../../renderers.mjs';
 
-const prerender = false;
+// Email templates
 const emailTemplates = {
   es: {
     toOwner: {
@@ -15,7 +14,7 @@ const emailTemplates = {
             <p><strong>Nombre:</strong> ${data.name}</p>
             <p><strong>Email:</strong> ${data.email}</p>
             <p><strong>Asunto:</strong> ${data.subject}</p>
-            ${data.budget ? `<p><strong>Presupuesto:</strong> ${data.budget}</p>` : ""}
+            ${data.budget ? `<p><strong>Presupuesto:</strong> ${data.budget}</p>` : ''}
           </div>
           
           <div style="background-color: #fff; border-left: 4px solid #3b82f6; padding: 20px; margin: 20px 0;">
@@ -30,21 +29,21 @@ const emailTemplates = {
       `
     },
     toSender: {
-      subject: "Confirmación: Hemos recibido tu mensaje",
+      subject: 'Confirmación: Hemos recibido tu mensaje',
       html: (name) => `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #3b82f6;">¡Gracias por contactarme!</h2>
           
           <p>Hola ${name},</p>
           
-          <p>He recibido tu mensaje y me pondré en contacto contigo muy pronto. Normalmente respondo en un plazo de 24 horas.</p>
+          <p>He recibido tu mensaje y me pondré en contacto contigo muy pronto. Generalmente respondo dentro de las 24 horas.</p>
           
           <div style="background-color: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3 style="color: #1e40af;">¿Qué pasa ahora?</h3>
+            <h3 style="color: #1e40af;">¿Qué sigue ahora?</h3>
             <ul>
               <li>Revisaré tu mensaje cuidadosamente</li>
               <li>Te responderé con una propuesta detallada</li>
-              <li>Coordinaremos una llamada si es necesario</li>
+              <li>Programaremos una llamada si es necesario</li>
             </ul>
           </div>
           
@@ -52,7 +51,7 @@ const emailTemplates = {
           <ul>
             <li>Revisar mis proyectos en <a href="https://github.com/martin-dev">GitHub</a></li>
             <li>Conectar conmigo en <a href="https://linkedin.com/in/martin-dev">LinkedIn</a></li>
-            <li>Seguirme en mis redes sociales</li>
+            <li>Seguirme en redes sociales</li>
           </ul>
           
           <p>¡Espero trabajar contigo pronto!</p>
@@ -68,17 +67,17 @@ const emailTemplates = {
   },
   en: {
     toOwner: {
-      subject: (subject) => `New Contact: ${subject}`,
+      subject: (subject) => `New contact: ${subject}`,
       html: (data) => `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #3b82f6;">New Contact Message</h2>
+          <h2 style="color: #3b82f6;">New contact message</h2>
           
           <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3>Contact Details:</h3>
+            <h3>Contact details:</h3>
             <p><strong>Name:</strong> ${data.name}</p>
             <p><strong>Email:</strong> ${data.email}</p>
             <p><strong>Subject:</strong> ${data.subject}</p>
-            ${data.budget ? `<p><strong>Budget:</strong> ${data.budget}</p>` : ""}
+            ${data.budget ? `<p><strong>Budget:</strong> ${data.budget}</p>` : ''}
           </div>
           
           <div style="background-color: #fff; border-left: 4px solid #3b82f6; padding: 20px; margin: 20px 0;">
@@ -93,7 +92,7 @@ const emailTemplates = {
       `
     },
     toSender: {
-      subject: "Confirmation: We received your message",
+      subject: 'Confirmation: We received your message',
       html: (name) => `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #3b82f6;">Thank you for reaching out!</h2>
@@ -130,90 +129,101 @@ const emailTemplates = {
     }
   }
 };
-const POST = async ({ request }) => {
+
+export default async function handler(req, res) {
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ success: false, message: 'Method not allowed' });
+  }
+
   try {
-    const formData = await request.json();
+    const formData = req.body;
+    
+    // Validate required fields
     if (!formData.name || !formData.email || !formData.message) {
-      return new Response(JSON.stringify({
+      return res.status(400).json({
         success: false,
-        message: "Missing required fields"
-      }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" }
+        message: 'Missing required fields'
       });
     }
+
+    // Get environment variables
     const emailUser = process.env.EMAIL_USER;
     const emailPassword = process.env.EMAIL_PASSWORD;
+    
     if (!emailUser || !emailPassword) {
-      console.error("Email credentials not configured");
-      return new Response(JSON.stringify({
+      console.error('Email credentials not configured');
+      return res.status(500).json({
         success: false,
-        message: "Email service not configured"
-      }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" }
+        message: 'Email service not configured'
       });
     }
+
+    // Create transporter
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: 'gmail',
       auth: {
         user: emailUser,
         pass: emailPassword
       }
     });
-    const templates = emailTemplates[formData.language || "es"];
+
+    const templates = emailTemplates[formData.language || 'es'];
+
+    // Email to owner (you)
     const ownerMailOptions = {
       from: emailUser,
-      to: "madezdev@gmail.com",
+      to: 'madezdev@gmail.com',
       subject: templates.toOwner.subject(formData.subject),
       html: templates.toOwner.html(formData),
       replyTo: formData.email
     };
+
+    // Confirmation email to sender
     const senderMailOptions = {
       from: emailUser,
       to: formData.email,
       subject: templates.toSender.subject,
       html: templates.toSender.html(formData.name)
     };
+
+    // Send emails
     await Promise.all([
       transporter.sendMail(ownerMailOptions),
       transporter.sendMail(senderMailOptions)
     ]);
-    return new Response(JSON.stringify({
+
+    return res.status(200).json({
       success: true,
-      message: "Emails sent successfully"
-    }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" }
+      message: 'Emails sent successfully'
     });
+
   } catch (error) {
-    console.error("Email sending error:", error);
-    let errorMessage = "Failed to send email";
+    console.error('Email sending error:', error);
+    
+    // More specific error handling
+    let errorMessage = 'Failed to send email';
     if (error instanceof Error) {
       errorMessage = error.message;
-      console.error("Error details:", {
+      console.error('Error details:', {
         message: error.message,
         stack: error.stack,
         name: error.name
       });
     }
-    return new Response(JSON.stringify({
+    
+    return res.status(500).json({
       success: false,
       message: errorMessage,
-      error: process.env.NODE_ENV === "development" ? error : void 0
-    }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" }
+      error: process.env.NODE_ENV === 'development' ? error : undefined
     });
   }
-};
-
-const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
-  __proto__: null,
-  POST,
-  prerender
-}, Symbol.toStringTag, { value: 'Module' }));
-
-const page = () => _page;
-
-export { page };
+}
