@@ -142,23 +142,35 @@ const POST = async ({ request }) => {
         headers: { "Content-Type": "application/json" }
       });
     }
+    const emailUser = process.env.EMAIL_USER;
+    const emailPassword = process.env.EMAIL_PASSWORD;
+    if (!emailUser || !emailPassword) {
+      console.error("Email credentials not configured");
+      return new Response(JSON.stringify({
+        success: false,
+        message: "Email service not configured"
+      }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "madezdev@gmail.com",
-        pass: "fewu fols ovvq bklk"
+        user: emailUser,
+        pass: emailPassword
       }
     });
     const templates = emailTemplates[formData.language || "es"];
     const ownerMailOptions = {
-      from: "madezdev@gmail.com",
+      from: emailUser,
       to: "madezdev@gmail.com",
       subject: templates.toOwner.subject(formData.subject),
       html: templates.toOwner.html(formData),
       replyTo: formData.email
     };
     const senderMailOptions = {
-      from: "madezdev@gmail.com",
+      from: emailUser,
       to: formData.email,
       subject: templates.toSender.subject,
       html: templates.toSender.html(formData.name)
@@ -176,9 +188,19 @@ const POST = async ({ request }) => {
     });
   } catch (error) {
     console.error("Email sending error:", error);
+    let errorMessage = "Failed to send email";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      console.error("Error details:", {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+    }
     return new Response(JSON.stringify({
       success: false,
-      message: "Failed to send email"
+      message: errorMessage,
+      error: process.env.NODE_ENV === "development" ? error : void 0
     }), {
       status: 500,
       headers: { "Content-Type": "application/json" }
