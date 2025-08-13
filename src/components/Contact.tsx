@@ -29,26 +29,31 @@ export default function Contact() {
     };
 
     try {
-      const response = await fetch('/api/contact', {
+      // Using Formspree service for form handling
+      const response = await fetch('https://formspree.io/f/your-form-id', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(contactData)
+        body: JSON.stringify({
+          name: contactData.name,
+          email: contactData.email,
+          subject: contactData.subject,
+          budget: contactData.budget,
+          message: contactData.message,
+          language: contactData.language
+        })
       });
 
-      const result = await response.json();
-
-      if (result.success) {
+      if (response.ok) {
         setIsSubmitting(false);
         setShowSuccess(true);
         form.reset();
 
-
         // Hide success message after 5 seconds
         setTimeout(() => setShowSuccess(false), 5000);
       } else {
-        throw new Error(result.message || 'Failed to send message');
+        throw new Error('Failed to send message');
       }
     } catch (error) {
       setIsSubmitting(false);
