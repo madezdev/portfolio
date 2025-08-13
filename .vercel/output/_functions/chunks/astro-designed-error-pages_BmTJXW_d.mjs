@@ -214,7 +214,7 @@ function deserializeActionResult(res) {
     error: void 0
   };
 }
-const actionResultErrorStack = /* @__PURE__ */ function actionResultErrorStackFn() {
+const actionResultErrorStack = /* @__PURE__ */ (function actionResultErrorStackFn() {
   let errorStack;
   return {
     set(stack) {
@@ -224,7 +224,7 @@ const actionResultErrorStack = /* @__PURE__ */ function actionResultErrorStackFn
       return errorStack;
     }
   };
-}();
+})();
 
 function template({
   title,
