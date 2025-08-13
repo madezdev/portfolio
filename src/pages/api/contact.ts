@@ -159,10 +159,12 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Create transporter
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: import.meta.env.SMTP_HOST || process.env.SMTP_HOST || 'smtp.gmail.com',
+      port: parseInt(import.meta.env.SMTP_PORT || process.env.SMTP_PORT || '587'),
+      secure: (import.meta.env.SMTP_SECURE || process.env.SMTP_SECURE) === 'true',
       auth: {
-        user: import.meta.env.EMAIL_USER || process.env.EMAIL_USER,
-        pass: import.meta.env.EMAIL_PASSWORD || process.env.EMAIL_PASSWORD
+        user: import.meta.env.SMTP_USER || process.env.SMTP_USER,
+        pass: import.meta.env.SMTP_PASS || process.env.SMTP_PASS
       }
     });
 
@@ -170,7 +172,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Email to owner (you)
     const ownerMailOptions = {
-      from: import.meta.env.EMAIL_USER || process.env.EMAIL_USER,
+      from: import.meta.env.SMTP_USER || process.env.SMTP_USER,
       to: 'madezdev@gmail.com',
       subject: templates.toOwner.subject(formData.subject),
       html: templates.toOwner.html(formData),
@@ -179,7 +181,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Confirmation email to sender
     const senderMailOptions = {
-      from: import.meta.env.EMAIL_USER || process.env.EMAIL_USER,
+      from: import.meta.env.SMTP_USER || process.env.SMTP_USER,
       to: formData.email,
       subject: templates.toSender.subject,
       html: templates.toSender.html(formData.name)

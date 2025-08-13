@@ -107,12 +107,13 @@ export default function Contact() {
             <div className="flex flex-col gap-2">
               {contactMethods.map((method) => (
                 <a
+                  key={method.key}
                   href={method.href}
                   target="_blank"
                   onClick={() => trackClick(`contact-${method.key}`, 'contact')}
                   className={`text-gray-400 hover:text-${method.color}-400 transition-colors`}
                 >
-                  <div key={method.key} className={`flex items-center p-4 bg-slate-900/50 rounded-xl border border-slate-800 hover:border-${method.color}-500/50 transition-colors group`}>
+                  <div className={`flex items-center p-4 bg-slate-900/50 rounded-xl border border-slate-800 hover:border-${method.color}-500/50 transition-colors group`}>
                     <div className={`w-12 h-12 bg-${method.color}-500/20 rounded-lg flex items-center justify-center mr-4 group-hover:bg-${method.color}-500/30 transition-colors`}>
                       <span className={`text-${method.color}-400 text-xl`}>{method.icon}</span>
                     </div>
