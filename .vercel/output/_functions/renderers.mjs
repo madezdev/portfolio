@@ -200,3 +200,4 @@ var server_default = renderer;
 const renderers = [Object.assign({"name":"@astrojs/react","clientEntrypoint":"@astrojs/react/client.js","serverEntrypoint":"@astrojs/react/server.js"}, { ssr: server_default }),];
 
 export { renderers };
+//# sourceMappingURL=renderers.mjs.map

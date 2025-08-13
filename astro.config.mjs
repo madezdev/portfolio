@@ -8,8 +8,7 @@ import react from '@astrojs/react';
 export default defineConfig({
   output: 'server',
   adapter: vercel({
-    webAnalytics: { enabled: true },
-    imageService: true
+    webAnalytics: { enabled: true }
   }),
   site: 'https://www.madez.dev',
   vite: {
@@ -19,7 +18,11 @@ export default defineConfig({
         key: './localhost+2-key.pem',
         cert: './localhost+2.pem',
       }
-    }
+    },
+    build: {
+      // Ensure sourcemaps are generated for better debugging
+      sourcemap: true
+    },
   },
 
   integrations: [react()]
