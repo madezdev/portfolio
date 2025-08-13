@@ -1,0 +1,21 @@
+# Robots.txt for Martin's Portfolio
+# https://developers.google.com/search/docs/crawling-indexing/robots/intro
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://tu-portfolio.vercel.app/sitemap.xml
+
+# Block access to admin areas and private files
+Disallow: /api/
+Disallow: /.env
+Disallow: /vercel.json
+
+# Block common non-content paths
+Disallow: /*?utm_*
+Disallow: /*?fbclid=*
+Disallow: /*?gclid=*
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1

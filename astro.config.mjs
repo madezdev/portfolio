@@ -1,6 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel/serverless';
+import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 
@@ -8,10 +8,7 @@ import react from '@astrojs/react';
 export default defineConfig({
   output: 'server',
   adapter: vercel({
-    webAnalytics: { enabled: true },
-    imageService: true,
-    includeFiles: ['./dist/**/*'],
-    edgeMiddleware: false  // Disable Edge middleware to use Node.js runtime
+    webAnalytics: { enabled: true }
   }),
   site: 'https://www.madez.dev',
   vite: {
@@ -26,10 +23,6 @@ export default defineConfig({
       // Ensure sourcemaps are generated for better debugging
       sourcemap: true
     },
-    ssr: {
-      // Improve SSR build performance
-      noExternal: ['@astrojs/vercel']
-    }
   },
 
   integrations: [react()]

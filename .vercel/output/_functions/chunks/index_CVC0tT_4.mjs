@@ -786,3 +786,4 @@ const typeHandlers = /* @__PURE__ */ new Map([
 const types = Array.from(typeHandlers.keys());
 
 export { types as a, appendForwardSlash as b, trimSlashes as c, isInternalPath as d, collapseDuplicateTrailingSlashes as e, fileExtension as f, hasFileExtension as h, isRemotePath as i, joinPaths as j, prependForwardSlash as p, removeTrailingForwardSlash as r, slash as s, typeHandlers as t };
+//# sourceMappingURL=index_CVC0tT_4.mjs.map
