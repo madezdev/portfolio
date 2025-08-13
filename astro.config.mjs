@@ -8,7 +8,8 @@ import react from '@astrojs/react';
 export default defineConfig({
   output: 'server',
   adapter: vercel({
-    webAnalytics: { enabled: true }
+    webAnalytics: { enabled: true },
+    includeFiles: ['.env', '.env.*']
   }),
   site: 'https://www.madez.dev',
   vite: {
@@ -23,6 +24,9 @@ export default defineConfig({
       // Ensure sourcemaps are generated for better debugging
       sourcemap: true
     },
+    define: {
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+    }
   },
 
   integrations: [react()]
