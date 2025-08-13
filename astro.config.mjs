@@ -10,7 +10,8 @@ export default defineConfig({
   adapter: vercel({
     webAnalytics: { enabled: true },
     imageService: true,
-    includeFiles: ['./dist/**/*']
+    includeFiles: ['./dist/**/*'],
+    edgeMiddleware: false  // Disable Edge middleware to use Node.js runtime
   }),
   site: 'https://www.madez.dev',
   vite: {
@@ -20,6 +21,14 @@ export default defineConfig({
         key: './localhost+2-key.pem',
         cert: './localhost+2.pem',
       }
+    },
+    build: {
+      // Ensure sourcemaps are generated for better debugging
+      sourcemap: true
+    },
+    ssr: {
+      // Improve SSR build performance
+      noExternal: ['@astrojs/vercel']
     }
   },
 
