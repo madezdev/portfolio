@@ -29,23 +29,18 @@ export default function Contact() {
     };
 
     try {
-      // Using Formspree service for form handling
-      const response = await fetch('https://formspree.io/f/your-form-id', {
+      // Using our own Nodemailer API
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name: contactData.name,
-          email: contactData.email,
-          subject: contactData.subject,
-          budget: contactData.budget,
-          message: contactData.message,
-          language: contactData.language
-        })
+        body: JSON.stringify(contactData)
       });
 
-      if (response.ok) {
+      const result = await response.json();
+
+      if (result.success) {
         setIsSubmitting(false);
         setShowSuccess(true);
         form.reset();
@@ -53,7 +48,7 @@ export default function Contact() {
         // Hide success message after 5 seconds
         setTimeout(() => setShowSuccess(false), 5000);
       } else {
-        throw new Error('Failed to send message');
+        throw new Error(result.error || 'Failed to send message');
       }
     } catch (error) {
       setIsSubmitting(false);
@@ -63,17 +58,38 @@ export default function Contact() {
         : 'Error sending message. Please try again.'
       );
 
-
       // Hide error message after 5 seconds
       setTimeout(() => setShowError(false), 5000);
     }
   };
 
+  // Color mappings for safe Tailwind classes
+  const colorClasses = {
+    blue: {
+      text: 'text-blue-400',
+      bg: 'bg-blue-500/20',
+      bgHover: 'group-hover:bg-blue-500/30',
+      border: 'hover:border-blue-500/50'
+    },
+    green: {
+      text: 'text-green-400',
+      bg: 'bg-green-500/20',
+      bgHover: 'group-hover:bg-green-500/30',
+      border: 'hover:border-green-500/50'
+    },
+    purple: {
+      text: 'text-purple-400',
+      bg: 'bg-purple-500/20',
+      bgHover: 'group-hover:bg-purple-500/30',
+      border: 'hover:border-purple-500/50'
+    }
+  };
+
   const contactMethods = [
-    { key: 'email', icon: '📧', color: 'blue', href: 'mailto:madezdev@gmail.com', value: 'madezdev@gmail.com' },
-    { key: 'whatsapp', icon: '💬', color: 'green', href: 'https://wa.me/5491133266874', value: '+54 9 (11) 3326-6874' },
-    { key: 'linkedin', icon: '💼', color: 'blue', href: 'https://linkedin.com/in/madezdev', value: '/in/madezdev' },
-    { key: 'github', icon: '🐙', color: 'purple', href: 'https://github.com/madezdev', value: '/madezdev' }
+    { key: 'email', icon: '📧', color: 'blue' as const, href: 'mailto:madezdev@gmail.com', value: 'madezdev@gmail.com' },
+    { key: 'whatsapp', icon: '💬', color: 'green' as const, href: 'https://wa.me/5491133266874', value: '+54 9 (11) 3326-6874' },
+    { key: 'linkedin', icon: '💼', color: 'blue' as const, href: 'https://linkedin.com/in/madezdev', value: '/in/madezdev' },
+    { key: 'github', icon: '🐙', color: 'purple' as const, href: 'https://github.com/madezdev', value: '/madezdev' }
   ];
 
   return (
@@ -104,23 +120,27 @@ export default function Contact() {
 
             {/* Contact Methods */}
             <div className="flex flex-col gap-2">
-              {contactMethods.map((method) => (
-                <a
-                  href={method.href}
-                  target="_blank"
-                  className={`text-gray-400 hover:text-${method.color}-400 transition-colors`}
-                >
-                  <div key={method.key} className={`flex items-center p-4 bg-slate-900/50 rounded-xl border border-slate-800 hover:border-${method.color}-500/50 transition-colors group`}>
-                    <div className={`w-12 h-12 bg-${method.color}-500/20 rounded-lg flex items-center justify-center mr-4 group-hover:bg-${method.color}-500/30 transition-colors`}>
-                      <span className={`text-${method.color}-400 text-xl`}>{method.icon}</span>
+              {contactMethods.map((method) => {
+                const colors = colorClasses[method.color];
+                return (
+                  <a
+                    key={method.key}
+                    href={method.href}
+                    target="_blank"
+                    className={`text-gray-400 hover:${colors.text} transition-colors`}
+                  >
+                    <div className={`flex items-center p-4 bg-slate-900/50 rounded-xl border border-slate-800 ${colors.border} transition-colors group`}>
+                      <div className={`w-12 h-12 ${colors.bg} rounded-lg flex items-center justify-center mr-4 ${colors.bgHover} transition-colors`}>
+                        <span className={`${colors.text} text-xl`}>{method.icon}</span>
+                      </div>
+                      <div>
+                        <h4 className="text-white font-semibold">{t(`contact.methods.${method.key}`)}</h4>
+                        <span className="text-gray-400">{method.value}</span>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="text-white font-semibold">{t(`contact.methods.${method.key}`)}</h4>
-                      {method.value}
-                    </div>
-                  </div>
-                </a>
-              ))}
+                  </a>
+                );
+              })}
             </div>
 
             {/* Availability Status */}
