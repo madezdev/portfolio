@@ -291,12 +291,12 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Create transporter
     const transporter = nodemailer.createTransport({
-      host: import.meta.env.SMTP_HOST || process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(import.meta.env.SMTP_PORT || process.env.SMTP_PORT || '587'),
-      secure: (import.meta.env.SMTP_SECURE || process.env.SMTP_SECURE) === 'true',
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      port: parseInt(process.env.SMTP_PORT || '587'),
+      secure: process.env.SMTP_SECURE === 'true',
       auth: {
-        user: import.meta.env.SMTP_USER || process.env.SMTP_USER,
-        pass: import.meta.env.SMTP_PASS || process.env.SMTP_PASS
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
       },
       debug: process.env.NODE_ENV === 'development',
       logger: process.env.NODE_ENV === 'development'

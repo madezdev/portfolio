@@ -1,8 +1,8 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import vercel from '@astrojs/vercel';
-import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
+import tailwind from '@astrojs/tailwind';
 
 // https://astro.build/config
 export default defineConfig({
@@ -13,7 +13,8 @@ export default defineConfig({
   site: 'https://www.madez.dev',
   
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [],
+    // Other vite config remains the same
     server: {
       https: {
         key: './localhost+2-key.pem',
@@ -29,5 +30,5 @@ export default defineConfig({
     }
   },
 
-  integrations: [react()]
+  integrations: [react(), tailwind()]
 });
