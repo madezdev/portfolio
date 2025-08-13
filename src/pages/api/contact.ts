@@ -175,11 +175,17 @@ export const POST: APIRoute = async ({ request }) => {
     // Get environment variables
     const emailUser = process.env.EMAIL_USER;
     const emailPassword = process.env.EMAIL_PASSWORD;
+    const emailServer = process.env.EMAIL_SERVER || 'smtp.gmail.com';
+    const emailPort = parseInt(process.env.EMAIL_PORT || '465');
+    const emailSecure = process.env.EMAIL_SECURE !== 'false';
     
     console.log('Environment variables check:', { 
       userPresent: !!emailUser, 
       passPresent: !!emailPassword,
       passLength: emailPassword?.length,
+      server: emailServer,
+      port: emailPort,
+      secure: emailSecure,
       nodeEnv: process.env.NODE_ENV
     });
     
@@ -200,7 +206,9 @@ export const POST: APIRoute = async ({ request }) => {
     // Create transporter
     console.log('Creating nodemailer transporter...');
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: emailServer,
+      port: emailPort,
+      secure: emailSecure,
       auth: {
         user: emailUser,
         pass: emailPassword
