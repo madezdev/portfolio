@@ -132,9 +132,17 @@ const emailTemplates = {
   }
 };
 const POST = async ({ request }) => {
+  console.log("Contact API called at:", (/* @__PURE__ */ new Date()).toISOString());
   try {
     const formData = await request.json();
+    console.log("Form data received:", {
+      name: formData.name,
+      email: formData.email,
+      hasSubject: !!formData.subject,
+      hasMessage: !!formData.message
+    });
     if (!formData.name || !formData.email || !formData.message) {
+      console.log("Validation failed - missing required fields");
       return new Response(
         JSON.stringify({
           success: false,
@@ -148,10 +156,14 @@ const POST = async ({ request }) => {
     console.log("Environment variables check:", {
       userPresent: !!emailUser,
       passPresent: !!emailPassword,
-      passLength: emailPassword?.length
+      passLength: emailPassword?.length,
+      nodeEnv: process.env.NODE_ENV
     });
     if (!emailUser || !emailPassword) {
-      console.error("Email credentials not configured");
+      console.error("Email credentials not configured", {
+        userEnv: process.env.EMAIL_USER ? "SET" : "MISSING",
+        passEnv: process.env.EMAIL_PASSWORD ? "SET" : "MISSING"
+      });
       return new Response(
         JSON.stringify({
           success: false,
@@ -160,6 +172,7 @@ const POST = async ({ request }) => {
         { status: 500 }
       );
     }
+    console.log("Creating nodemailer transporter...");
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -167,6 +180,7 @@ const POST = async ({ request }) => {
         pass: emailPassword
       }
     });
+    console.log("Transporter created successfully");
     const language = formData.language && (formData.language === "es" || formData.language === "en") ? formData.language : "es";
     const templates = emailTemplates[language];
     const ownerMailOptions = {
@@ -182,10 +196,12 @@ const POST = async ({ request }) => {
       subject: templates.toSender.subject,
       html: templates.toSender.html(formData.name)
     };
+    console.log("Attempting to send emails...");
     await Promise.all([
       transporter.sendMail(ownerMailOptions),
       transporter.sendMail(senderMailOptions)
     ]);
+    console.log("Emails sent successfully");
     return new Response(
       JSON.stringify({
         success: true,
