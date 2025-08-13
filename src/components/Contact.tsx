@@ -19,28 +19,17 @@ export default function Contact() {
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
 
-    const contactData = {
-      name: formData.get('name') as string,
-      email: formData.get('email') as string,
-      subject: formData.get('subject') as string,
-      budget: formData.get('budget') as string,
-      message: formData.get('message') as string,
-      language: lang
-    };
-
     try {
-      // Using our own Nodemailer API
-      const response = await fetch('/api/contact', {
+      // Using Formspree as external form service
+      const response = await fetch('https://formspree.io/f/xzbnkkzk', {
         method: 'POST',
+        body: formData,
         headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(contactData)
+          Accept: 'application/json'
+        }
       });
 
-      const result = await response.json();
-
-      if (result.success) {
+      if (response.ok) {
         setIsSubmitting(false);
         setShowSuccess(true);
         form.reset();
@@ -48,7 +37,8 @@ export default function Contact() {
         // Hide success message after 5 seconds
         setTimeout(() => setShowSuccess(false), 5000);
       } else {
-        throw new Error(result.error || 'Failed to send message');
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to send message');
       }
     } catch (error) {
       setIsSubmitting(false);
