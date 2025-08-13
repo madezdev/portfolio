@@ -1,6 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel';
+import vercel from '@astrojs/vercel/serverless';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 
@@ -9,7 +9,8 @@ export default defineConfig({
   output: 'server',
   adapter: vercel({
     webAnalytics: { enabled: true },
-    imageService: true
+    imageService: true,
+    includeFiles: ['./dist/**/*']
   }),
   site: 'https://www.madez.dev',
   vite: {
