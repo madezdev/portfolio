@@ -1,17 +1,17 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-// Cambiamos a modo estático para eliminar la dependencia de serverless
-import vercel from '@astrojs/vercel/static';
+import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
-  output: 'static',
+  output: 'server', // Server-rendered for API routes
   adapter: vercel({
     webAnalytics: { enabled: true }
   }),
   site: 'https://www.madez.dev',
+  
   vite: {
     plugins: [tailwindcss()],
     server: {

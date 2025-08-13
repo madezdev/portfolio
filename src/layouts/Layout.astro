@@ -23,8 +23,8 @@ const {
 
 import '../styles/global.css'
 
-const canonicalUrl = `https://tu-portfolio.vercel.app${url}`;
-const imageUrl = `https://tu-portfolio.vercel.app${image}`;
+const canonicalUrl = new URL(url, Astro.site || Astro.url.origin);
+const imageUrl = new URL(image, Astro.site || Astro.url.origin);
 ---
 
 <!doctype html>
@@ -45,9 +45,9 @@ const imageUrl = `https://tu-portfolio.vercel.app${image}`;
 		
 		<!-- Icons -->
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+		<!-- <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" /> -->
+		<!-- <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" /> -->
+		<!-- <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" /> -->
 		<link rel="manifest" href="/manifest.json" />
 		
 		<!-- Open Graph Meta Tags -->
@@ -86,8 +86,8 @@ const imageUrl = `https://tu-portfolio.vercel.app${image}`;
 		</noscript>
 		
 		<!-- Preload critical images -->
-		<link rel="preload" href="/hero-bg.webp" as="image" type="image/webp" media="(min-width: 768px)">
-		<link rel="preload" href="/og-image.jpg" as="image" type="image/jpeg">
+		<!-- <link rel="preload" href="/hero-bg.webp" as="image" type="image/webp" media="(min-width: 768px)"> -->
+		<!-- <link rel="preload" href="/og-image.jpg" as="image" type="image/jpeg"> -->
 		
 		<!-- JSON-LD Structured Data -->
 		<script type="application/ld+json">
